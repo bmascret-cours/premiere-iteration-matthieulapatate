@@ -42,7 +42,7 @@ public class ChessImageProvider {
 		ret = null;
 		key = pieceType + pieceCouleur.name();
 		value = mapImage.get(key);
-		File g=new File("");
+		File g=new File("D:\\\\4ETI\\\\COO POO\\\\3IRC_4ETI_POO_Projet_1516\\\\3IRC 4ETI POO Projet e-campus 1516");
 		ret = g.getAbsolutePath()+"\\images\\" + value;
 		return ret;		
 	}

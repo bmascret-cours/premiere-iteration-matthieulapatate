@@ -9,7 +9,7 @@ package model;
  */
 public interface Pieces {
 
-	public boolean capture();
+	public boolean Capture();
 	
 	public boolean move(int xFinal,int yFinal);
 	

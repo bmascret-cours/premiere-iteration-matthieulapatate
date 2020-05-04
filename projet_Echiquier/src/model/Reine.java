@@ -1,13 +1,17 @@
 package model;
 
-public class Reine {
+public class Reine extends AbstractPiece{
 
-	public boolean move(int xFinal,int yFinal) {
-		return true;
+	public Reine(Couleur couleur,Coord coord) {
+		super(couleur, coord);
+		
 	}
 	
 	public boolean isMoveOk(int xFinal,int yFinal) {
-		return true;
+		if((xFinal!=this.getX() & (yFinal==this.getY())) || (yFinal!=this.getY() & (xFinal==this.getX())) || (Math.abs(xFinal-this.getX())==Math.abs(yFinal-this.getY()))) {
+			return true;
+		}
+		else return false;
 	}
 	
 }
