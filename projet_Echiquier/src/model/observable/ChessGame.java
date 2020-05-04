@@ -94,6 +94,7 @@ public class ChessGame extends Observable implements BoardGames{
 	/* (non-Javadoc)
 	 * @see java.util.Observable#notifyObservers(java.lang.Object)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void	notifyObservers(Object arg) {
 		super.setChanged();

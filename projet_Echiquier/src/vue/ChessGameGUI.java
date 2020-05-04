@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,11 +23,13 @@ import controler.ChessGameControlers;
 import controler.controlerLocal.ChessGameControler;
 import model.Coord;
 import model.Couleur;
+import model.PieceIHM;
 import tools.ChessImageProvider;
 import tools.ChessPiecePos;
 
 public class ChessGameGUI extends JFrame implements MouseListener, MouseMotionListener, Observer {
 
+	private Dimension dim;
 	private JLayeredPane layeredPane;
 	private JPanel chessBoard;
 	private JLabel chessPiece;
@@ -45,36 +48,52 @@ public class ChessGameGUI extends JFrame implements MouseListener, MouseMotionLi
 		  layeredPane.addMouseListener(this);
 		  layeredPane.setPreferredSize(dim);
 		  layeredPane.addMouseMotionListener(this);
-
-		  chessBoard = new JPanel();
-		  layeredPane.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
-		  chessBoard.setLayout( new GridLayout(8, 8) );
-		  chessBoard.setPreferredSize( dim );
-		  chessBoard.setBounds(0, 0, dim.width, dim.height);
+		  this.dim=dim;
+			chessBoard = new JPanel();
+			layeredPane.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
+			chessBoard.setLayout( new GridLayout(8, 8) );
+			chessBoard.setPreferredSize( this.dim );
+			chessBoard.setBounds(0, 0, this.dim.width, this.dim.height);
+			for (int i = 0; i < 64; i++) {
+				JPanel square = new JPanel( new BorderLayout() );
+				chessBoard.add( square );
+				  
+				int row = (i / 8) % 2;
+				if (row == 0)
+				square.setBackground( i % 2 == 0 ? Color.blue : Color.white );
+				else
+				square.setBackground( i % 2 == 0 ? Color.white : Color.blue );}
 		  
-		  for (int i = 0; i < 64; i++) {
-			  JPanel square = new JPanel( new BorderLayout() );
-			  chessBoard.add( square );
-		  
-			  int row = (i / 8) % 2;
-			  if (row == 0)
-			  square.setBackground( i % 2 == 0 ? Color.blue : Color.white );
-			  else
-			  square.setBackground( i % 2 == 0 ? Color.white : Color.blue );}
-		 
-		  for (int i = 0; i < ChessPiecePos.values().length; i++) {
-				for (int j = 0; j < (ChessPiecePos.values()[i].coords).length; j++) {
-					JLabel piece = new JLabel( new ImageIcon(ChessImageProvider.getImageFile(ChessPiecePos.values()[i].nom, ChessPiecePos.values()[i].couleur)) );
-					int pos=ChessPiecePos.values()[i].coords[j].x+ChessPiecePos.values()[i].coords[j].y*8;
-					JPanel panel = (JPanel)chessBoard.getComponent(pos);
-					panel.add(piece);
-				}
-			}
 	}
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
+		
+		this.layeredPane.removeAll();
+		chessBoard = new JPanel();
+		layeredPane.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
+		chessBoard.setLayout( new GridLayout(8, 8) );
+		chessBoard.setPreferredSize( this.dim );
+		chessBoard.setBounds(0, 0, this.dim.width, this.dim.height);
+		for (int i = 0; i < 64; i++) {
+			JPanel square = new JPanel( new BorderLayout() );
+			chessBoard.add( square );
+			  
+			int row = (i / 8) % 2;
+			if (row == 0)
+			square.setBackground( i % 2 == 0 ? Color.blue : Color.white );
+			else
+			square.setBackground( i % 2 == 0 ? Color.white : Color.blue );}
+		List<PieceIHM> L=(List<PieceIHM>) arg;
+		System.out.println(L);
+				  
+		for (PieceIHM pieceIHM : L) {	
+			for(Coord coord : pieceIHM.getList()) {
+				JLabel piece = new JLabel( new ImageIcon(ChessImageProvider.getImageFile(pieceIHM.getTypePiece(),pieceIHM.getCouleur())) );
+				JPanel panel = (JPanel)chessBoard.getComponent(coord.x+coord.y*8);
+				panel.add(piece);
+			}
+		}
 
 	}
 
@@ -99,12 +118,12 @@ public class ChessGameGUI extends JFrame implements MouseListener, MouseMotionLi
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		chessPiece = null;
+		  chessPiece = null;
 		  Component c =  chessBoard.findComponentAt(e.getX(), e.getY());
 
 		  if (c instanceof JPanel) 
 		  return;
-		  
+		  chessPiece = (JLabel)c;
 		  Point parentLocation = c.getParent().getLocation();
 		  this.initiale=new Coord((parentLocation.x-2)/87,(parentLocation.y-2)/87);
 		  if (this.chessGameControler.isPlayerOK(new Coord((parentLocation.x-2)/87,(parentLocation.y-2)/87))){
@@ -122,29 +141,22 @@ public class ChessGameGUI extends JFrame implements MouseListener, MouseMotionLi
 		if(chessPiece == null) return;
 		  chessPiece.setVisible(false);
 		  Component c =  chessBoard.findComponentAt(e.getX(), e.getY());
-		 
-		  //if(this.chessGameControler.move(new Coord(this.x,this.y), new Coord((parentLocation.x-2)/87,(parentLocation.y-2)/87))){
-		  
+		 		  
 		  if (c instanceof JLabel){
 			  Container parent = c.getParent();
 		  	  if(this.chessGameControler.move(this.initiale,new Coord((parent.getLocation().x-2)/87,(parent.getLocation().y-2)/87))){
 		  		  parent.remove(0);
 		  		  parent.add( chessPiece );
 		  	  }
+
+		  		  
 		  }
-		  
 		  else {
-			  
 			  Container parent = (Container)c;
-			  if(this.chessGameControler.move(this.initiale, new Coord((c.getLocation().x-2)/87,(c.getLocation().y-2)/87))) {
+			  if(this.chessGameControler.move(this.initiale, new Coord((c.getLocation().x-2)/87,(c.getLocation().y-2)/87))) 
 			  		parent.add( chessPiece );
-			  }
-			  else{
-				JPanel panel = (JPanel)chessBoard.getComponent(this.initiale.x+this.initiale.y*8);
-				panel.add(chessPiece);
-			   }
+			  
 		  }
-		  
 		  chessPiece.setVisible(true);
 	}
 
