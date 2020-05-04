@@ -123,10 +123,10 @@ public class ChessGameGUI extends JFrame implements MouseListener, MouseMotionLi
 
 		  if (c instanceof JPanel) 
 		  return;
-		  chessPiece = (JLabel)c;
 		  Point parentLocation = c.getParent().getLocation();
-		  this.initiale=new Coord((parentLocation.x-2)/87,(parentLocation.y-2)/87);
 		  if (this.chessGameControler.isPlayerOK(new Coord((parentLocation.x-2)/87,(parentLocation.y-2)/87))){
+		  this.initiale=new Coord((parentLocation.x-2)/87,(parentLocation.y-2)/87);
+		  chessPiece = (JLabel)c;
 		  xAdjustment = parentLocation.x - e.getX();
 		  yAdjustment = parentLocation.y - e.getY();
 		  chessPiece = (JLabel)c;

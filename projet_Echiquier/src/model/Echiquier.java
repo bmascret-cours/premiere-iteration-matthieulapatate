@@ -81,6 +81,15 @@ public class Echiquier implements BoardGames {
 	public boolean isMoveOk(int xInit, int yInit, int xFinal, int yFinal) {
 		Pieces P=findPiece(xInit,yInit);
 		Object O=findPiece(xFinal,yFinal);
+		if (O instanceof Pieces) {
+			if (((Pieces) O).getCouleur()==P.getCouleur())
+				return false;
+			else {
+				System.out.println(O);
+				((Pieces) O).Capture();
+				return(P.isMoveOk(xFinal, yFinal));
+			}
+		}
 		return(P.isMoveOk(xFinal, yFinal));
 	}
 	
